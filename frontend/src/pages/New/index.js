@@ -4,17 +4,16 @@ import api from '../../services/api'
 import camera from '../../assets/camera.svg'
 import './styles.css'
 
-export default ({ history }) => {
+export default function New({ history }) {
   const [thumbnail, setThumbnail] = useState(null)
   const [company, setCompany] = useState('')
   const [technologies, setTechnologies] = useState('')
   const [price, setPrice] = useState('')
 
-  const preview = useMemo(() =>
-    thumbnail
-      ? URL.createObjectURL(thumbnail)
-      : null
-  , [thumbnail])
+  const preview = useMemo(() => { 
+    return thumbnail ? URL.createObjectURL(thumbnail) : null
+  }, [thumbnail])
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -39,60 +38,40 @@ export default ({ history }) => {
       <label
         id="thumbnail"
         style={{backgroundImage: `url(${preview})`}}
-        className={
-          thumbnail
-            ? 'has-thumbnail'
-            : ''
-        }
+        className={ thumbnail ? 'has-thumbnail' : ''}
       >
-        <input
-          type="file"
-          onChange={
-            event => setThumbnail(event.target.files[0])
-          }
-        />
-
-        <img src={camera} alt="select file" />
+        <input type="file" onChange={ event => setThumbnail(event.target.files[0]) } />
+        <img src={camera} alt="select imagem" />
       </label>
 
-      <label htmlFor="company">COMPANY *</label>
+      <label htmlFor="company">EMPRESA *</label>
       <input
         id="company"
-        placeholder="Your amazing company"
+        placeholder="Sua empresa incrível"
         value={company}
-        onChange={
-          event => setCompany(event.target.value)
-        }
+        onChange={ event => setCompany(event.target.value) }
       >
       </input>
 
-      <label htmlFor="technologies">
-        TECHNOLOGIES * <span>(separated by commas)</span>
-      </label>
+      <label htmlFor="techs">TECNOLOGIAS * <span>(separadas por vírgula)</span> </label>
       <input
         id="technologies"
-        placeholder="What technologies does your company use?"
+        placeholder="Quais tecnologias usam?"
         value={technologies}
-        onChange={
-          event => setTechnologies(event.target.value)
-        }
+        onChange={ event => setTechnologies(event.target.value) }
       >
       </input>
 
-      <label htmlFor="price">
-        DAILY PRICE * <span>(let blank to set as FREE)</span>
-      </label>
+      <label htmlFor="price">VALOR DE DIÁRIA * <span>(em branco para GRATUITO)</span> </label>
       <input
         id="price"
-        placeholder="What's the daily price?"
+        placeholder="Valor cobrado por dia"
         value={price}
-        onChange={
-          event => setPrice(event.target.value)
-        }
+        onChange={ event => setPrice(event.target.value) }
       >
       </input>
 
-      <button type="submit" className="btn">Add</button>
+      <button type="submit" className="btn">Cadastrar</button>
     </form>
   )
 }

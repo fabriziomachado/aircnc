@@ -5,11 +5,12 @@ import Routes from './routes'
 import logo from './assets/logo.svg'
 import './App.css'
 
-export default () =>
+function App() {
+  return( 
   <BrowserRouter>
     <div className="container">
       <Link to="/dashboard">
-        <img src={logo} alt="Aircnc logo" />
+        <img src={logo} alt="Aircnc" />
       </Link>
 
       <div className="content">
@@ -17,3 +18,7 @@ export default () =>
       </div>
     </div>
   </BrowserRouter>
+  )
+}
+
+export default App

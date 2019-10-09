@@ -1,22 +1,23 @@
 import React, { useEffect, useState, useMemo } from 'react'
+
 import moment from 'moment';
 import 'moment/locale/pt-br';
-
 import { Link } from 'react-router-dom'
 import socketio from 'socket.io-client'
 import api from '../../services/api'
-import serverConfig from '../../config/server-config'
-
 import './styles.css'
 
-export default () => {
+require('dotenv').config();
+console.log( process.env.REACT_APP_BASE_URL)
+
+export default function Dashboard() {
   const [spots, setSpots] = useState([])
   const [requests, setRequests] = useState([])
 
   const user_id = localStorage.getItem('user')
 
   // memoriza o valor da variável até que ela mude
-  const socket = useMemo(() => socketio( serverConfig.URL, {
+  const socket = useMemo(() => socketio( process.env.REACT_APP_BASE_URL, {
       query: { user_id }
     }
   ), [user_id]) //caso o user_id mude
@@ -28,32 +29,29 @@ export default () => {
   }, [requests, socket])
 
   useEffect(() => {
-    (async () => {
+    async function loadSpots() {
       const user_id = localStorage.getItem('user')
-
-      const response =
-        await api.get('/dashboard', {
+      const response = await api.get('/dashboard', {
           headers: { user_id }
         })
 
       setSpots(response.data)
-    })()
+    }
+
+    loadSpots()
   }, [])
 
-  const handleAccept = async (id) => {
+
+  async function handleAccept(id) {
     await api.post(`/bookings/${id}/approvals`)
 
-    setRequests(
-      requests.filter(request => request._id !== id)
-    )
+    setRequests(requests.filter(request => request._id !== id))
   }
 
-  const handleReject = async (id) => {
+  async function handleReject(id) {
     await api.post(`/bookings/${id}/rejections`)
 
-    setRequests(
-      requests.filter(request => request._id !== id)
-    )
+    setRequests(requests.filter(request => request._id !== id))
   }
 
   
@@ -79,17 +77,13 @@ export default () => {
           <li key={spot._id}>
             <header style={{backgroundImage: `url('${spot.thumbnail_url}')`}} />
             <strong>{spot.company}</strong>
-            <span>{
-              spot.price
-                ? `$${spot.price}/day`
-                : `FREE`
-            }</span>
+            <span>{spot.price ? `R$${spot.price}/day`: `GRATUITO`}</span>
           </li>
         ))}
       </ul>
 
       <Link to="/new">
-        <button className="btn">Adicionar novo Spot</button>
+        <button className="btn">Novo Spot</button>
       </Link>
     </>
   )

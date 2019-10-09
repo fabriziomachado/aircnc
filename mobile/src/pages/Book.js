@@ -1,72 +1,65 @@
-import React, { useState, useEffect } from 'react'
-
-import {
-  Alert,
-  SafeAreaView,
-  Text,
-  Platform,
-  TouchableOpacity,
-  AsyncStorage,
-  StyleSheet
-} from 'react-native'
+import React, { useState } from 'react';
+import {  View, Text, Alert,StyleSheet, AsyncStorage, TextInput, TouchableOpacity } from 'react-native';
 
 import api from '../services/api'
 
-const DatePicker = Platform.OS === 'ios' ? require('DatePickerIOS') : require('../components/DatePickerAndroid');
+export default function Book({ navigation }) {
+  const [date, setDate] = useState('');
+  const id = navigation.getParam('id');
 
-export default ({ navigation }) => {
-  const initalDate = Platform.OS === 'ios' ? new Date() : new Date().toDateString()
-  
-  const id = navigation.getParam('id')
-  const [date, setDate] = useState(initalDate)
-
-  const handleSubmit = async () => {
+  async function handleSubmit() {
     const user_id = await AsyncStorage.getItem('user');
 
-    await api.post(`/spots/${id}/bookings`, { 
-      date: Platform.OS === 'ios' ? date.toDateString() : date 
-    }, 
-    {
+    await api.post(`/spots/${id}/bookings`, {
+      date
+    }, {
       headers: { user_id }
-    });
+    })
 
-    Alert.alert('Solicitação de reserva enviada.')
-    navigation.navigate('List')
+    Alert.alert('Solicitação de reserva enviada!');
+
+    navigation.navigate('List');
   }
 
-  const handleCancel = () => navigation.navigate('List');
+  function handleCancel() {
+    navigation.navigate('List');
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.label}>Qual data você quer reservar?</Text>
-
-      {<DatePicker date={date} onDateChange={setDate} />}
+    <View style={styles.container}>
+      <Text style={styles.label}>DATA DE INTERESSE *</Text>
+      <TextInput
+      style={styles.input}
+      placeholder="Qual data você quer reservar?"
+      placeholderTextColor="#999"
+      autoCapitalize="words"
+      autoCorrect={false}
+      value={date}
+      onChangeText={setDate}
+      />
 
       <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-        <Text style={styles.buttonText}>
-          Reservar
-        </Text>
+        <Text style={styles.buttonText}>Solicitar reserva</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleCancel} style={[styles.button, styles.cancelButton]}>
-        <Text style={styles.buttonText}>
-          Cancelar
-        </Text>
+      
+      <TouchableOpacity onPress={handleCancel} style={[styles.button ,styles.cancelButton]}>
+        <Text style={styles.buttonText}>Cancelar</Text>
       </TouchableOpacity>
-    </SafeAreaView>
-  )
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    margin: 30
+    margin: 30,
+    marginTop: 50,
   },
 
   label: {
     fontWeight: 'bold',
     color: '#444',
-    marginTop: 20,
-    marginBottom: 8
+    marginBottom: 8,
+    marginTop: 30,
   },
 
   input: {
@@ -77,26 +70,25 @@ const styles = StyleSheet.create({
     color: '#444',
     height: 44,
     marginBottom: 20,
-    borderRadius: 2
+    borderRadius: 2,
   },
 
   button: {
     height: 42,
-    backgroundColor: '#ec3246',
+    backgroundColor: '#f05a5b',
     justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 2
+    alignItems: "center",
+    borderRadius: 2,
   },
 
   cancelButton: {
-    backgroundColor: '#7a8188',
-    marginTop: 10
-
+    backgroundColor: '#ccc',
+    marginTop: 10,
   },
 
   buttonText: {
     color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 15
+    fontWeight: 'bold', 
+    fontSize: 16
   }
 })

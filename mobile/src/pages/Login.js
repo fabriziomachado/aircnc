@@ -1,47 +1,26 @@
 import React, { useState, useEffect } from 'react'
 
-import {
-  View,
-  AsyncStorage,
-  KeyboardAvoidingView,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet
-} from 'react-native'
+import { View, AsyncStorage, KeyboardAvoidingView, Image, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native'
 
 import api from '../services/api'
-
 import logo from '../assets/logo.png'
 
-export default ({ navigation }) => {
+export default function Login({ navigation }) {
   const [email, setEmail] = useState('')
   const [technologies, setTechnologies] = useState('')
 
   useEffect(() => {
-    AsyncStorage
-      .getItem('user')
-      .then(user =>
-        user
-          ? navigation.navigate('List')
-          : ''
-      )
-  }, [])
+    AsyncStorage.getItem('user').then( user =>
+        user ? navigation.navigate('List') : '' 
+        )}, [])
 
   useEffect(() => {
-    AsyncStorage
-      .getItem('technologies')
-      .then(techs =>
-        techs
-          ? setTechnologies(techs)
-          : ''
-      )
-  }, [])
+    AsyncStorage.getItem('technologies').then(techs =>
+        techs ? setTechnologies(techs) : ''
+      )}, [])
 
   const handleSubmit = async () => {
-    const response =
-      await api.post('/sessions', { email })
+    const response = await api.post('/sessions', { email })
 
     const { _id } = response.data
 
